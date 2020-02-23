@@ -306,6 +306,14 @@ def gen_csv(rows):
         with open(dest, 'a', encoding="utf_8_sig") as f:
             f.write('\n'.join(v) + "\n")
 
+def check_after_RGBA2RGB(files):
+     for image_file in files:
+         img = Image.open("{}/{}".format(BASE_DIR, image_file))
+         if img.mode == "RGBA":
+             img.convert("RGB").save()
+
+
+            
 def gen_pdf(rows):
     pdf_lists = {}
     for row in rows:
@@ -337,6 +345,7 @@ def gen_pdf(rows):
                 continue
 
             make_file_dir(pdf_name)
+            check_after_RGBA2RGB(files)
             with open(pdf_name, "wb") as f:
                 f.write(img2pdf.convert(["{}/{}".format(BASE_DIR, file) for file in files], nodate=True))
 
