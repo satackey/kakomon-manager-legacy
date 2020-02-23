@@ -50,7 +50,8 @@ commit-assorted:
 configure-skicka:
 	echo ${SKICKA_TOKENCACHE_JSON} > /root/.skicka.tokencache.json
 
-upload:
+upload: configure-skicka generate
+	UPLOAD_FROM="integrated_pdf"
 	CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
 
 	# 括弧書きでブランチ名をフォルダの末尾に追加
@@ -62,12 +63,12 @@ upload:
 
 	# アップロードするフォルダの絶対パス
 	UPLOAD_BASE_DIR="/過去問管理/過去問(複製･再配布禁止)${DIR_PREFIX}"
-	UPLOAD_DIR="$UPLOAD_BASE_DIR/2年"
+	UPLOAD_DIR="${UPLOAD_BASE_DIR}/2年"
 	skicka mkdir "${UPLOAD_BASE_DIR}" || true
 	skicka mkdir "${UPLOAD_DIR}" || true
-	skicka upload -ignore-times ./ "${UPLOAD_DIR}"
+	skicka upload -ignore-times "./${UPLOAD_FROM}" "${UPLOAD_DIR}"
 
-	skicka -verbose download -ignore-times "${UPLOAD_DIR}" ./ 2>&1 | \
+	skicka -verbose download -ignore-times "${UPLOAD_DIR}" "./${UPLOAD_FROM}" 2>&1 | \
 	sed "/Downloaded and wrote/!d" | \
 	sed -E "s/.*bytes to //" | \
 	xargs -I{} skicka rm "${UPLOAD_DIR}/{}" || true
@@ -75,8 +76,6 @@ upload:
 	# Temporary setting. FOLLOWING LINES SHOULD BE CHANGED
 	skicka mkdir "${UPLOAD_BASE_DIR}/1年" || true
 	skicka mkdir "${UPLOAD_BASE_DIR}/1年/地理-2019" || true
-	mkdir -p ./地理
-	skicka upload "./地理" "${UPLOAD_BASE_DIR}/1年/地理-2019/"
+	mkdir -p "./${UPLOAD_FROM}/地理"
+	skicka upload "./${UPLOAD_FROM}/地理" "${UPLOAD_BASE_DIR}/1年/地理-2019/"
 
-
-deploy: configure-skicka upload

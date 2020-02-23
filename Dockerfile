@@ -6,7 +6,7 @@ RUN set -ex \
     && apk update \
     && pip install --upgrade pip \
     # Install dependencies
-    && apk --no-cache add make git jpeg-dev \
+    && apk --no-cache add make openssh git jpeg-dev \
     # Install poetry, curl (to fetch poetry installation script), and pillow dependencies
     && apk --no-cache --virtual .build-dep add curl zlib-dev gcc linux-headers libc-dev \
     && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python \
