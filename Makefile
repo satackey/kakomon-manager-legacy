@@ -21,11 +21,11 @@ gen-csv-if-added: ci-git-setup
 	NEW_CSV="$(git diff HEAD~ --name-only --diff-filter=A | grep -e pdf -e jpg -e png || echo "")"
 	ADDED_NUM=$(echo -n "$NEW_CSV" | wc -m | sed "s/\ *//")
 
-	if [[ $ADDED_NUM -ge 1 ]]; then
+	if [[ ${ADDED_NUM} -ge 1 ]]; then
 		NEW_CSV="$(echo -n "$NEW_CSV" | sed s/$/,,,,,,,,,/)"
 		NEW_FILE="metadatas/unassorted_$(git log --date=short --pretty=format:"%ad_%s_%h" -1 | tr "\n" _ | sed 's/[\ \/\n]/_/g').csv"
-		touch $NEW_FILE
-		echo -en "src,subj,tool_type,period,year,content_type,author,image_index,included_pages_num,fix_text\n$NEW_CSV" > $NEW_FILE
+		touch ${NEW_FILE}
+		echo -en "src,subj,tool_type,period,year,content_type,author,image_index,included_pages_num,fix_text\n${NEW_CSV}" > ${NEW_FILE}
 		# echo "$NEW_CSV" >> metadatas/unassorted.csv
 	fi
 
