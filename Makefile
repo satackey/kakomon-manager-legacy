@@ -59,7 +59,7 @@ configure-skicka:
 upload: configure-skicka
 	# $(eval DIR_PREFIX := $(shell echo ' ($(CURRENT_BRANCH))'))
 
-	$(eval DIR_PREFIX := $(shell if [ "$(CURRENT_BRANCH)" = "test-kakomon-manager-legacy" ]; then \
+	$(eval DIR_PREFIX := $(shell if [ "$(CURRENT_BRANCH)" = "master" ]; then \
 		echo ''; \
 	else \
 		echo ' ($(CURRENT_BRANCH))'; \
