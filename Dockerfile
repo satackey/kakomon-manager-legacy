@@ -1,3 +1,5 @@
+FROM satackey/skicka AS skicka
+
 FROM python:3.7-alpine
 
 WORKDIR /app
@@ -22,6 +24,9 @@ RUN set -ex \
 
 ENV PATH "$PATH:/root/.poetry/bin"
 ENV DOC_DIR "/doc"
+
+COPY --from=skicka /usr/local/bin/skicka /usr/local/bin/skicka
+RUN skicka init
 
 COPY app.py Makefile docker-entrypoint.sh ./
 
