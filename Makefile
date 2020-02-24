@@ -1,7 +1,11 @@
 .PHONY: ci-git-setup ci-git-push
 
-KNOWN_HOSTS := 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=='
-CSV_HEADER := 'src,subj,tool_type,period,year,content_type,author,image_index,included_pages_num,fix_text'
+KNOWN_HOSTS := github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+CSV_HEADER := src,subj,tool_type,period,year,content_type,author,image_index,included_pages_num,fix_text
+UPLOAD_FROM := ${DOC_DIR}/integrated_pdf
+CURRENT_BRANCH := $(shell git symbolic-ref --short HEAD)
+UPLOAD_TO_BASE := /過去問管理
+UPLOAD_TO_MASTER := $(UPLOAD_TO_BASE)/過去問(複製･再配布禁止)
 
 ci-git-setup:
 	@git config --global core.quotepath false \
@@ -50,35 +54,36 @@ generate:
 	@python3 app.py generate
 
 configure-skicka:
-	@echo ${SKICKA_TOKENCACHE_JSON} > /root/.skicka.tokencache.json
+	@echo '${SKICKA_TOKENCACHE_JSON}' > '/root/.skicka.tokencache.json'
 
 upload: configure-skicka
-	@# 括弧書きでブランチ名をフォルダの末尾に追加
-	$(eval DIR_PREFIX := " ($(CURRENT_BRANCH))")
+	# $(eval DIR_PREFIX := $(shell echo ' ($(CURRENT_BRANCH))'))
 
-	# masterブランチの時は括弧書きはつけない
-	@if [ "$(CURRENT_BRANCH)" = "master" ]; then \
-		DIR_PREFIX=""; \
-	fi
+	$(eval DIR_PREFIX := $(shell if [ "$(CURRENT_BRANCH)" = "test-kakomon-manager-legacy" ]; then \
+		echo ''; \
+	else \
+		echo ' ($(CURRENT_BRANCH))'; \
+	fi))
 
 	# アップロードするフォルダの絶対パス
-	$(eval UPLOAD_TO_BASE := "$(UPLOAD_TO_DEFAULT)$(DIR_PREFIX)")
-	$(eval UPLOAD_TO := "$(UPLOAD_TO_BASE)/2年")
-	skicka mkdir "$(UPLOAD_TO_BASE)"
-	skicka mkdir "$(UPLOAD_TO)"
-	skicka upload -ignore-times "./$(UPLOAD_FROM)" "$(UPLOAD_TO)"
+	$(eval UPLOAD_TO := $(shell echo '$(UPLOAD_TO_MASTER)$(DIR_PREFIX)'))
+	$(eval UPLOAD_TO_2 := $(shell echo '$(UPLOAD_TO)/2年'))
+
+	skicka mkdir '$(UPLOAD_TO)' || true
+	skicka mkdir '$(UPLOAD_TO_2)' || true
+	skicka upload -ignore-times '$(UPLOAD_FROM)' '$(UPLOAD_TO_2)'
 
 	$(eval OUTDATED_FILE_PATHS := $(shell \
-		skicka -verbose download -ignore-times "$(UPLOAD_TO)" "./$(UPLOAD_FROM)" 2>&1 | \
+		skicka -verbose download -ignore-times "$(UPLOAD_TO_2)" "$(UPLOAD_FROM)" 2>&1 | \
 		sed "/Downloaded and wrote/!d" | \
 		sed -E "s/.*bytes to //"))
 
 	@echo Outdated files:
-	@echo $(OUTDATED_FILE_PATHS)
-	@echo $(OUTDATED_FILE_PATHS) | xargs -I{} skicka rm "$(UPLOAD_TO)/{}" || true
+	@echo '$(OUTDATED_FILE_PATHS)'
+	@echo '$(OUTDATED_FILE_PATHS)' | xargs -I{} skicka rm "$(UPLOAD_TO)/{}" || true
 
 	# Temporary setting. FOLLOWING LINES SHOULD BE CHANGED.
-	skicka mkdir "$(UPLOAD_TO_BASE)/1年" || true
-	skicka mkdir "$(UPLOAD_TO_BASE)/1年/地理-2019" || true
-	mkdir -p "./$(UPLOAD_FROM)/地理"
-	skicka upload "./$(UPLOAD_FROM)/地理" "$(UPLOAD_TO_BASE)/1年/地理-2019/"
+	skicka mkdir "$(UPLOAD_TO)/1年" || true
+	skicka mkdir "$(UPLOAD_TO)/1年/地理-2019" || true
+	mkdir -p "$(UPLOAD_FROM)/地理"
+	skicka upload "$(UPLOAD_FROM)/地理" "$(UPLOAD_TO)/1年/地理-2019/"

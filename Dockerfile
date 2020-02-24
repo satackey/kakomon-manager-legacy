@@ -2,6 +2,8 @@ FROM satackey/skicka AS skicka
 
 FROM python:3.7-alpine
 
+COPY --from=skicka /usr/local/bin/skicka /usr/local/bin/skicka
+
 WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 RUN set -ex \
@@ -20,13 +22,11 @@ RUN set -ex \
     && poetry config virtualenvs.create false \
     && poetry install \
     && rm -rf ~/.cache \
-    && apk del .build-dep
+    && apk del .build-dep \
+    && skicka init
 
 ENV PATH "$PATH:/root/.poetry/bin"
 ENV DOC_DIR "/doc"
-
-COPY --from=skicka /usr/local/bin/skicka /usr/local/bin/skicka
-RUN skicka init
 
 COPY app.py Makefile docker-entrypoint.sh ./
 
