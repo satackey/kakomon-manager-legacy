@@ -52,13 +52,13 @@ generate:
 configure-skicka:
 	@echo ${SKICKA_TOKENCACHE_JSON} > /root/.skicka.tokencache.json
 
-upload: configure-skicka generate
-	# 括弧書きでブランチ名をフォルダの末尾に追加
+upload: configure-skicka
+	@# 括弧書きでブランチ名をフォルダの末尾に追加
 	$(eval DIR_PREFIX := " ($(CURRENT_BRANCH))")
 
 	# masterブランチの時は括弧書きはつけない
 	@if [ "$(CURRENT_BRANCH)" = "master" ]; then \
-		DIR_PREFIX="" \
+		DIR_PREFIX=""; \
 	fi
 
 	# アップロードするフォルダの絶対パス
@@ -71,7 +71,7 @@ upload: configure-skicka generate
 	$(eval OUTDATED_FILE_PATHS := $(shell \
 		skicka -verbose download -ignore-times "$(UPLOAD_TO)" "./$(UPLOAD_FROM)" 2>&1 | \
 		sed "/Downloaded and wrote/!d" | \
-		sed -E "s/.*bytes to //")
+		sed -E "s/.*bytes to //"))
 
 	@echo Outdated files:
 	@echo $(OUTDATED_FILE_PATHS)
