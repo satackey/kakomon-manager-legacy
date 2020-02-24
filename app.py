@@ -17,6 +17,7 @@ TESTS_DIR = f"{DOC_DIR}/tests"
 STUDIES_DIR = f"{DOC_DIR}/studies"
 INTEGRATED_DIR = f"{DOC_DIR}/integrated"
 INTEGRATED_PDF_DIR = f"{DOC_DIR}/integrated_pdf"
+METADATAS_DIR = f"{DOC_DIR}/metadatas"
 
 # csv_files = ['./metadatas/test-images-01.csv']
 
@@ -145,7 +146,7 @@ def check_rows(rows):
 
         errors = []
 
-        if not os.path.isfile(row['src']):
+        if not os.path.isfile(f"{DOC_DIR}/{row['src']}"):
             errors.append("source file doesn't exist")
 
         if row['tool_type'] == "テスト":
@@ -254,16 +255,16 @@ def move_file(row, dir):
     dest_filename = create_filename(row)
     new_src = "{d:}/{y:}/{n:}".format(d=dir, y=row['year'], n=dest_filename)
 
-    dest_path = "{b:}/{d}".format(b=BASE_DIR, d=new_src)
+    dest_path = "{b:}/{d:}".format(b=BASE_DIR, d=new_src)
     make_file_dir(dest_path)
-    shutil.move(row['src'], dest_path)
+    shutil.move(f"{DOC_DIR}/{row['src']}", dest_path)
     row['src'] = new_src
     return row
 
 def move_unchanged_files(src):
-    dest = "new/{}".format(src)
+    dest = f"{DOC_DIR}/new/{src}"
     make_file_dir(dest)
-    shutil.move(src, dest)
+    shutil.move(f"{DOC_DIR}/{src}", dest)
 
 def gen_csv(rows):
     write_rows = {}
@@ -288,7 +289,7 @@ def gen_csv(rows):
                 write_dest = "metadatas/{}_{}_{}_{}_{}.csv".format(row_type, row['year'], row['period'], row['subj'], row['author'])
                 tool_type = "test" if row['tool_type'] == "テスト" else "study"
             else:
-                write_dest = row['orig_csv']
+                write_dest = f"metadatas/{row['orig_csv'].split('/')[-1]}"
             write_row_values = []
             write_row_values.append(row['src'])
             [write_row_values.append(row[key]) for key in to_csv_row_keys]
@@ -299,18 +300,18 @@ def gen_csv(rows):
             write_rows[write_dest].append(write_row)
 
     for k, v in write_rows.items():
-        dest = "new/{}".format(k)
+        dest = f"{DOC_DIR}/new/{k}"
         make_file_dir(dest)
         v.sort()
         v.insert(0, ",".join([key for key in ['src'] + to_csv_row_keys]))
         with open(dest, 'a', encoding="utf_8_sig") as f:
             f.write('\n'.join(v) + "\n")
 
-def check_after_RGBA2RGB(files):
-     for image_file in files:
-         img = Image.open("{}/{}".format(BASE_DIR, image_file))
-         if img.mode == "RGBA":
-             img.convert("RGB").save()
+def remove_alpha_channel(files):
+    for image_file in files:
+        img = Image.open(image_file)
+        if img.mode == "RGBA":
+            img.convert("RGB").save()
 
 
             
@@ -324,19 +325,19 @@ def gen_pdf(rows):
         if not unified_name in pdf_lists[row['subj']]:
             pdf_lists[row['subj']][unified_name] = []
         
-        pdf_lists[row['subj']][unified_name].append(row['src'])
+        pdf_lists[row['subj']][unified_name].append(f"{BASE_DIR}/{row['src']}")
 
     for subj, set_lists in pdf_lists.items():
         for set_name, files in set_lists.items():
             files.sort()
             image_files = []
 
-            pdf_name = "{b:}/{i:}/{s:}/{u:}.pdf".format(
-                b=BASE_DIR, i=INTEGRATED_PDF_DIR, s=subj, u=set_name)
+            pdf_name = "{i:}/{s:}/{u:}.pdf".format(
+                i=INTEGRATED_PDF_DIR, s=subj, u=set_name)
 
             if len(files) == 1 and files[0].endswith('.pdf'):
                 make_file_dir(pdf_name)
-                shutil.copy("{}/{}".format(BASE_DIR, files[0]), pdf_name)
+                shutil.copy(files[0], pdf_name)
                 continue
 
             files = list(filter(lambda file: file.endswith('.jpg') or file.endswith('.png'), files))
@@ -345,9 +346,9 @@ def gen_pdf(rows):
                 continue
 
             make_file_dir(pdf_name)
-            check_after_RGBA2RGB(files)
+            remove_alpha_channel(files)
             with open(pdf_name, "wb") as f:
-                f.write(img2pdf.convert(["{}/{}".format(BASE_DIR, file) for file in files], nodate=True))
+                f.write(img2pdf.convert(files, nodate=True))
 
 def gen_symlinks(rows):
     for row in rows:
@@ -377,17 +378,21 @@ def gen_symlinks(rows):
         os.symlink("../../../" + row['src'], integrated_path)
 
 def replace_dir():
-    replace_dirs = ['scanned', 'studies', 'tests', 'metadatas', INTEGRATED_DIR, INTEGRATED_PDF_DIR]
-    [shutil.rmtree(dir_) for dir_ in replace_dirs if os.path.exists(dir_)]
+    replace_dirs = ['scanned', 'studies', 'tests', 'metadatas']
     for dir_ in replace_dirs:
-        orig_dir = "{}/{}".format(BASE_DIR, dir_)
+        orig_dir = f"{BASE_DIR}/{dir_}"
+        dest_dir = f"{DOC_DIR}/{dir_}"
+
+        if os.path.exists(dest_dir):
+            shutil.rmtree(dest_dir)
+
         if os.path.exists(orig_dir):
-            shutil.move(orig_dir, dir_)
+            shutil.move(orig_dir, dest_dir)
     os.rmdir(BASE_DIR)
 
 
 def main():
-    rows = get_csv_rows("./metadatas")
+    rows = get_csv_rows(METADATAS_DIR)
     rows = check_rows(rows)
     if len(rows['invalid']) != 0:
         print("invalid rows:")
@@ -407,8 +412,8 @@ def main():
         print("ok")
         sys.exit(0)
 
-    rows['test'] = [move_file(test, TESTS_DIR) for test in rows['test']]
-    rows['study'] = [move_file(study, STUDIES_DIR) for study in rows['study']]
+    rows['test'] = [move_file(test, 'tests') for test in rows['test']]
+    rows['study'] = [move_file(study, 'studies') for study in rows['study']]
 
     [os.remove(row['src']) for row in rows['remove']]
     [move_unchanged_files(row['src']) for row in rows['unassorted']]

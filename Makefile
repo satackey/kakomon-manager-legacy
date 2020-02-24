@@ -36,7 +36,6 @@ check:
 	python3 app.py check
 
 assort:
-	git add -A metadatas
 	python3 app.py assort
 
 generate:
