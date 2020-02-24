@@ -21,8 +21,9 @@ ci-git-push: ci-git-setup
 		exit 0; \
 	fi \
 	&& git add . \
-	&& git commit -m "[auto] assort $$(git show -s --format=%s)" \
-	&& git push origin $$(git rev-parse --abbrev-ref HEAD)
+	&& git commit -m "[auto] assort $$(git show -s --format=%s)"
+	@git tag assorted-$$(git rev-parse HEAD) \
+	&& git push origin $$(git rev-parse --abbrev-ref HEAD) --tags
 
 gen-csv-if-added:
 	$(eval NEW_CSV_ROWS := $(shell git diff HEAD~ --name-only --diff-filter=A | grep -e pdf -e jpg -e png | sed s/$$/,,,,,,,,,/))
@@ -37,7 +38,7 @@ gen-csv-if-added:
 	@if [[ '${ADDED_NUM}' -eq '0' ]];then echo "追加されたファイルはありません" && exit 0; \
 	elif [[ $(PARENT_COUNT) -gt 2 ]];then echo "Merge commitのためCSV生成はスキップされました" && exit 0; fi \
 	&& rm -f "${NEW_CSV_PATH}" \
-	&& echo -en "${NEW_CSV_CONTENT}" > "${NEW_CSV_PATH}"\
+	&& echo -en "${NEW_CSV_CONTENT}" > "${NEW_CSV_PATH}" \
 	&& echo "CSVファイル($(NEW_CSV_PATH))が生成されました";
 
 setup:
@@ -48,6 +49,13 @@ check:
 
 assort:
 	@python3 app.py assort
+
+is-assortment-completed:
+	$(eval BEFORE_SHA1 := $(shell sha1sum /doc/metadatas/* | sha1sum))
+	@make assort
+	$(eval AFTER_SHA1 := $(shell sha1sum /doc/metadatas/* | sha1sum))
+
+	if [[ ! '$(BEFORE_SHA1)' = '$(AFTER_SHA1)' ]]; then exit 1; fi
 
 generate:
 	@rm -rf integrated_pdf
