@@ -4,7 +4,7 @@ description = "Convert images to PDF via direct JPEG inclusion."
 name = "img2pdf"
 optional = false
 python-versions = "*"
-version = "0.3.4"
+version = "0.3.5"
 
 [package.dependencies]
 Pillow = "*"
@@ -22,12 +22,12 @@ python-versions = ">=3.5"
 version = "7.0.0"
 
 [metadata]
-content-hash = "24550659df7991eba477bbb4690651ab5dd8336dc0559913317d9c7a84d2925c"
+content-hash = "7c09af3837763db6b1e01c93d7e60970f84c6efc303a636f54313bfb06ebea00"
 python-versions = "^3.7"
 
 [metadata.files]
 img2pdf = [
-    {file = "img2pdf-0.3.4.tar.gz", hash = "sha256:0b482b7f317b76051fabf6e50e5eea1584b20bdf76b6b54c16b6ef1d5298ee49"},
+    {file = "img2pdf-0.3.5.tar.gz", hash = "sha256:be676b5afebd3c55eb3f3edd9af1ff3e599fef89e91fbf2290b0259da58f1e19"},
 ]
 pillow = [
     {file = "Pillow-7.0.0-cp35-cp35m-macosx_10_6_intel.whl", hash = "sha256:5f3546ceb08089cedb9e8ff7e3f6a7042bb5b37c2a95d392fb027c3e53a2da00"},
