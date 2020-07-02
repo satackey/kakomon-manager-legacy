@@ -22,7 +22,7 @@ ci-git-push: ci-git-setup
 	fi \
 	&& git add --all \
 	&& git commit -m "[auto] assort $$(git show -s --format=%s)"
-	@git tag assorted-$$(git rev-parse HEAD) \
+	@git tag -f assorted-$$(git rev-parse HEAD) \
 	&& git push origin $$(git rev-parse --abbrev-ref HEAD) --tags
 
 gen-csv-if-added:
