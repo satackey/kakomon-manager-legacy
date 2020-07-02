@@ -20,7 +20,7 @@ ci-git-push: ci-git-setup
 		echo "変更はありません"; \
 		exit 0; \
 	fi \
-	&& git add . \
+	&& git add --all \
 	&& git commit -m "[auto] assort $$(git show -s --format=%s)"
 	@git tag assorted-$$(git rev-parse HEAD) \
 	&& git push origin $$(git rev-parse --abbrev-ref HEAD) --tags
