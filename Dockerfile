@@ -12,7 +12,7 @@ RUN set -ex \
     # Install dependencies
     && apk --no-cache add make openssh-client git jpeg-dev \
     # Install poetry, curl (to fetch poetry installation script), and pillow building dependencies
-    && apk --no-cache --virtual .build-dep add curl zlib-dev gcc linux-headers libc-dev libffi-dev openssl-dev \
+    && apk --no-cache --virtual .build-dep add curl zlib-dev gcc linux-headers libc-dev libxml2-dev libffi-dev libxslt-dev openssl-dev \
     # && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python \
     # ↑より↓の方が容量が小さい
     && pip install poetry \
