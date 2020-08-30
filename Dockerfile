@@ -18,9 +18,9 @@ RUN set -ex && \
         libffi-dev \
         libxslt-dev \
         libssl-dev \
+    && \
     # && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python \
     # ↑より↓の方が容量が小さい
-    && \
     pip install poetry && \
     export PATH=$PATH:/root/.poetry/bin && \
     export LIBRARY_PATH=/lib:/usr/lib \
@@ -51,6 +51,7 @@ RUN set -ex && \
 ENV PATH "$PATH:/root/.poetry/bin"
 ENV DOC_DIR "/doc"
 
+WORKDIR /app
 COPY app.py Makefile docker-entrypoint.sh ./
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
