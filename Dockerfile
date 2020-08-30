@@ -1,29 +1,52 @@
+ARG PYTHON_VERSION=3.8
 FROM satackey/skicka AS skicka
 
-FROM python:3.7-alpine
-
-COPY --from=skicka /usr/local/bin/skicka /usr/local/bin/skicka
+FROM python:$PYTHON_VERSION AS build
 
 WORKDIR /app
 COPY pyproject.toml poetry.lock ./
-RUN set -ex \
-    && apk update \
-    && pip install --upgrade pip \
-    # Install dependencies
-    && apk --no-cache add make openssh-client git jpeg-dev \
+RUN set -ex && \
+    apt-get update && \
+    pip install --upgrade pip && \
     # Install poetry, curl (to fetch poetry installation script), and pillow building dependencies
-    && apk --no-cache --virtual .build-dep add curl zlib-dev gcc linux-headers libc-dev libxml2-dev libffi-dev libxslt-dev openssl-dev \
+    apt-get install -y --no-install-recommends \
+        curl \
+        zlib1g-dev \
+        gcc \
+        libc-dev \
+        libxml2-dev \
+        libffi-dev \
+        libxslt-dev \
+        libssl-dev \
     # && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python \
     # ↑より↓の方が容量が小さい
-    && pip install poetry \
-    && export PATH=$PATH:/root/.poetry/bin \
-    && export LIBRARY_PATH=/lib:/usr/lib \
+    && \
+    pip install poetry && \
+    export PATH=$PATH:/root/.poetry/bin && \
+    export LIBRARY_PATH=/lib:/usr/lib \
+    && \
     # Don't use virtualenv, install packages directly on the container
-    && poetry config virtualenvs.create false \
-    && poetry install \
-    && rm -rf ~/.cache \
-    && apk del .build-dep \
-    && skicka init
+    poetry config virtualenvs.create false && \
+    poetry install && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# ここからは実行用コンテナの準備
+FROM python:$PYTHON_VERSION-slim AS runtime
+
+COPY --from=skicka /usr/local/bin/skicka /usr/local/bin/skicka
+COPY --from=build /usr/local/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
+
+RUN set -ex && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        make \
+        openssh-client \
+        git \
+        libjpeg-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    skicka init
 
 ENV PATH "$PATH:/root/.poetry/bin"
 ENV DOC_DIR "/doc"
@@ -31,4 +54,4 @@ ENV DOC_DIR "/doc"
 COPY app.py Makefile docker-entrypoint.sh ./
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
-CMD ["ash"]
+CMD ["bash"]
