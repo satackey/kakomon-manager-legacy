@@ -304,7 +304,7 @@ def gen_csv(rows):
         make_file_dir(dest)
         v.sort()
         v.insert(0, ",".join([key for key in ['src'] + to_csv_row_keys]))
-        with open(dest, 'a', encoding="utf_8_sig") as f:
+        with open(dest, 'a', encoding="utf_8") as f:
             f.write('\n'.join(v) + "\n")
 
 def remove_alpha_channel(files):
