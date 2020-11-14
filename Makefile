@@ -27,7 +27,7 @@ ci-git-push: ci-git-setup
 	&& git push origin $$(git rev-parse --abbrev-ref HEAD) --tags
 
 gen-csv-if-added:
-	$(eval NEW_CSV_ROWS := $(shell git diff HEAD~ --name-only --diff-filter=A | grep -e pdf -e jpg -e png | sed 's/\"*\(.*\)\"*/\1,,,,,,,,,/g'))
+	$(eval NEW_CSV_ROWS := $(shell git diff HEAD~ --name-only --diff-filter=A | grep -e pdf -e jpg -e png | sed s/\"*\(.*\)\"*/\1,,,,,,,,,/g))
 	$(eval NEW_CSV_CONTENT := ${CSV_HEADER}\n${NEW_CSV_ROWS})
 	$(eval ADDED_NUM := $(shell echo -n "$(NEW_CSV_ROWS)" | wc -m | sed "s/\ *//"))
 	$(eval NEW_CSV_PATH := ../metadatas/unassorted_$(shell git log --date=short --pretty=format:"%ad_%s_%h" -1 | tr "\n" _ | sed 's/[\ \/\n]/_/g').csv)
