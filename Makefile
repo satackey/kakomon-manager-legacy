@@ -76,7 +76,7 @@ upload: configure-skicka
 
 	# アップロードするフォルダの絶対パス
 	$(eval UPLOAD_TO := $(shell echo '$(UPLOAD_TO_MASTER)$(DIR_PREFIX)'))
-	$(eval UPLOAD_TO_2 := $(shell echo '$(UPLOAD_TO)/2年'))
+	$(eval UPLOAD_TO_2 := $(shell echo '$(UPLOAD_TO)/全ての教科'))
 
 	skicka mkdir '$(UPLOAD_TO)' || true
 	skicka mkdir '$(UPLOAD_TO_2)' || true
