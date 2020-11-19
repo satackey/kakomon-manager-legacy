@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION=3.8
-FROM satackey/skicka AS skicka
+FROM quay.io/satackey/skicka AS skicka
 
 FROM python:$PYTHON_VERSION AS build
 
