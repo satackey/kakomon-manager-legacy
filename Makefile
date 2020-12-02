@@ -82,15 +82,15 @@ upload: configure-skicka
 	skicka mkdir '$(UPLOAD_TO_2)' || true
 	skicka upload -ignore-times '$(UPLOAD_FROM)' '$(UPLOAD_TO_2)'
 
-	$(eval OUTDATED_FILE_PATHS := $(shell \
-	        set -x && \
-		skicka -verbose download -ignore-times "$(UPLOAD_TO_2)" "$(UPLOAD_FROM)" 2>&1 | \
-		sed "/Downloaded and wrote/!d" | \
-		sed -E "s/.*bytes to $(shell echo "$(UPLOAD_FROM)" | sed 's/\//\\\//g')//g"))
+	# $(eval OUTDATED_FILE_PATHS := $(shell \
+	#	set -x && \
+	#	skicka -verbose download -ignore-times "$(UPLOAD_TO_2)" "$(UPLOAD_FROM)" 2>&1 | \
+	#	sed "/Downloaded and wrote/!d" | \
+	#	sed -E "s/.*bytes to $(shell echo "$(UPLOAD_FROM)" | sed 's/\//\\\//g')//g"))
 
-	@echo Outdated files:
-	@echo '$(OUTDATED_FILE_PATHS)'
-	@echo '$(OUTDATED_FILE_PATHS)' | xargs -I{} skicka rm "$(UPLOAD_TO_2)/{}" || true
+	# @echo Outdated files:
+	# @echo '$(OUTDATED_FILE_PATHS)'
+	# @echo '$(OUTDATED_FILE_PATHS)' | xargs -I{} skicka rm "$(UPLOAD_TO_2)/{}" || true
 
 	# Temporary setting. FOLLOWING LINES SHOULD BE CHANGED.
 	skicka mkdir "$(UPLOAD_TO)/1年" || true
