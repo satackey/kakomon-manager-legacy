@@ -6,7 +6,7 @@ CSV_HEADER := src,subj,tool_type,period,year,content_type,author,image_index,inc
 UPLOAD_FROM := ${DOC_DIR}/integrated_pdf
 CURRENT_BRANCH := $(shell git symbolic-ref --short HEAD)
 UPLOAD_TO_BASE := /過去問管理
-UPLOAD_TO_MASTER := $(UPLOAD_TO_BASE)/過去問(複製･再配布禁止)
+UPLOAD_TO_MASTER := /test-preps
 
 ci-git-setup:
 	@git config --global core.quotepath false \
@@ -93,7 +93,7 @@ upload: configure-skicka
 	# @echo '$(OUTDATED_FILE_PATHS)' | xargs -I{} skicka rm "$(UPLOAD_TO_2)/{}" || true
 
 	# Temporary setting. FOLLOWING LINES SHOULD BE CHANGED.
-	skicka mkdir "$(UPLOAD_TO)/1年" || true
-	skicka mkdir "$(UPLOAD_TO)/1年/地理-2019" || true
-	mkdir -p "$(UPLOAD_FROM)/地理"
-	skicka upload "$(UPLOAD_FROM)/地理" "$(UPLOAD_TO)/1年/地理-2019/"
+	# skicka mkdir "$(UPLOAD_TO)/1年" || true
+	# skicka mkdir "$(UPLOAD_TO)/1年/地理-2019" || true
+	# mkdir -p "$(UPLOAD_FROM)/地理"
+	# skicka upload "$(UPLOAD_FROM)/地理" "$(UPLOAD_TO)/1年/地理-2019/"
