@@ -78,7 +78,7 @@ upload: # configure-skicka
 	# $(eval UPLOAD_TO := $(shell echo '$(UPLOAD_TO_MASTER)$(DIR_PREFIX)'))
 	# $(eval UPLOAD_TO_2 := $(shell echo '$(UPLOAD_TO)/全ての教科'))
 
-	rclone sync '$(UPLOAD_FROM)' 'drive:/' --checksum --progress
+	rclone sync '$(UPLOAD_FROM)' 'drive:/' --checksum --progress --ignore-times --buffer-size=0
 
 	# $(eval OUTDATED_FILE_PATHS := $(shell \
 	#	set -x && \
