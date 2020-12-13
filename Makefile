@@ -65,22 +65,20 @@ generate:
 configure-skicka:
 	@echo '${SKICKA_TOKENCACHE_JSON}' > '/root/.skicka.tokencache.json'
 
-upload: configure-skicka
+upload: # configure-skicka
 	# $(eval DIR_PREFIX := $(shell echo ' ($(CURRENT_BRANCH))'))
 
-	$(eval DIR_PREFIX := $(shell if [ "$(CURRENT_BRANCH)" = "master" ]; then \
-		echo ''; \
-	else \
-		echo ' ($(CURRENT_BRANCH))'; \
-	fi))
+	# $(eval DIR_PREFIX := $(shell if [ "$(CURRENT_BRANCH)" = "master" ]; then \
+	# 	echo ''; \
+	# else \
+	# 	echo ' ($(CURRENT_BRANCH))'; \
+	# fi))
 
-	# アップロードするフォルダの絶対パス
-	$(eval UPLOAD_TO := $(shell echo '$(UPLOAD_TO_MASTER)$(DIR_PREFIX)'))
-	$(eval UPLOAD_TO_2 := $(shell echo '$(UPLOAD_TO)/全ての教科'))
+	# # アップロードするフォルダの絶対パス
+	# $(eval UPLOAD_TO := $(shell echo '$(UPLOAD_TO_MASTER)$(DIR_PREFIX)'))
+	# $(eval UPLOAD_TO_2 := $(shell echo '$(UPLOAD_TO)/全ての教科'))
 
-	skicka mkdir '$(UPLOAD_TO)' || true
-	skicka mkdir '$(UPLOAD_TO_2)' || true
-	skicka upload -ignore-times '$(UPLOAD_FROM)' '$(UPLOAD_TO_2)'
+	rclone sync '$(UPLOAD_FROM)' 'drive:'
 
 	# $(eval OUTDATED_FILE_PATHS := $(shell \
 	#	set -x && \

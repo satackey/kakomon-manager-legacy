@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION=3.8
-FROM quay.io/satackey/skicka AS skicka
+FROM rclone/rclone:1.53.3 AS rclone
 
 FROM python:$PYTHON_VERSION AS build
 
@@ -34,7 +34,7 @@ RUN set -ex && \
 # ここからは実行用コンテナの準備
 FROM python:$PYTHON_VERSION-slim AS runtime
 
-COPY --from=skicka /usr/local/bin/skicka /usr/local/bin/skicka
+COPY --from=rclone /usr/local/bin/rclone /usr/local/bin/rclone
 COPY --from=build /usr/local/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
 
 RUN set -ex && \
@@ -45,8 +45,7 @@ RUN set -ex && \
         git \
         libjpeg-dev && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    skicka init
+    rm -rf /var/lib/apt/lists/*
 
 ENV PATH "$PATH:/root/.poetry/bin"
 ENV DOC_DIR "/doc"
