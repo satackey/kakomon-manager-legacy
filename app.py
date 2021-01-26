@@ -150,7 +150,7 @@ def check_rows(rows):
         errors = []
 
         if not os.path.isfile(f"{DOC_DIR}/{row['src']}"):
-            errors.append(f"ファイル「{DOC_DIR}/{row['src']}」はないぞ？")
+            errors.append(f"ファイル「{row['src']}」はないぞ？")
 
         if row['tool_type'] == "テスト":
             if row['content_type'] != "問題" and row['content_type'] != "解答なし答案用紙" and row['content_type'] != "答案" and row['content_type'] != "学生解答" and row['content_type'] != "模範解答" and row['content_type'] != "解答":
@@ -407,7 +407,7 @@ def main():
     is_ok, conflicts = check_conflict(rows)
 
     if not is_ok:
-        print('conflicts:')
+        print('変更が競合しています:')
         pprint(conflicts)
         sys.exit(1)
 
