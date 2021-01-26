@@ -28,6 +28,8 @@ def arabic_to_roman(string):
         '3': 'iii',
         '4': 'iv',
         '5': 'v',
+        'Ⅰ': 'i',
+        'Ⅱ': 'ii',
         'Ⅲ': 'iii',
     })
     return string.translate(table)
