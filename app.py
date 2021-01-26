@@ -150,39 +150,39 @@ def check_rows(rows):
         errors = []
 
         if not os.path.isfile(f"{DOC_DIR}/{row['src']}"):
-            errors.append("source file doesn't exist")
+            errors.append(f"ファイル「{DOC_DIR}/{row['src']}」はないぞ？")
 
         if row['tool_type'] == "テスト":
             if row['content_type'] != "問題" and row['content_type'] != "解答なし答案用紙" and row['content_type'] != "答案" and row['content_type'] != "学生解答" and row['content_type'] != "模範解答" and row['content_type'] != "解答":
-                errors.append("content type is invalid")
+                errors.append(f"種類が「{row['content_type']}」なのはおかしいぞ？種類が「{row['tool_type']}」のときは「問題」「解答なし答案用紙」「答案」「学生解答」「模範解答」「解答」のどれかにしないと。")
         elif row['tool_type'] == "勉強用":
             if row['content_type'] != "ノート" and row['content_type'] != "まとめ" and row['content_type'] != "対策プリント":
-                errors.append("content type is invalid")
+                errors.append(f"種類が「{row['content_type']}」なのはおかしいぞ？種類が「{row['tool_type']}」のときは「ノート」「まとめ」「対策プリント」のどれかにしないと。")
         else:
-            errors.append("tool type is invalid")
+            errors.append(f"用途が「{row['tool_type']}」なのはおかしいぞ？「テスト」「勉強用」のどれかにしないと。")
 
         if not row['subj'].isalnum():
-            errors.append("subject name is empty")
+            errors.append("教科名が空なのはおかしいぞ？")
 
         if not row['period'].isalpha():
-            errors.append("period is empty")
+            errors.append("時期が空なのはおかしいぞ？「前期中間」「前期定期」「後期中間」「後期定期」のどれかにしないと。")
         elif row['period'] != "前期中間" and row['period'] != "前期定期" and row['period'] != "後期中間" and row['period'] != "後期定期":
-            errors.append("period is invalid")
+            errors.append(f"時期が「{row['period']}」なのはおかしいぞ？「前期中間」「前期定期」「後期中間」「後期定期」のどれかにしないと。")
 
         if row['year'] == "不明":
             skip_rows.append(row)
             continue
         elif not row['year'].isnumeric():
-            errors.append("year is not numeric")
+            errors.append(f"年度が「{row['year']}」なんて数字じゃないのはおかしいぞ？整数にしないと。")
 
         # if not row['author'].isalnum() or row['author'] != "":
         #     errors.append("author is invalid")
 
         if not row['image_index'].isnumeric():
-            errors.append("image index is invalid")
+            errors.append(f"ページ数が「{row['image_index']}」なんて数字じゃないのはおかしいぞ？整数にしないと。")
         
         if not row['included_pages_num'].isnumeric():
-            errors.append("included pages num is invalid")
+            errors.append(f"included pages num が「{row['included_pages_num']}」なんて数字じゃないのはおかしいぞ？整数にしないと。")
 
         # if there is no error.
         if len(errors) == 0:
