@@ -1,6 +1,6 @@
 [[package]]
 name = "img2pdf"
-version = "0.4.0"
+version = "0.4.1"
 description = "Convert images to PDF via direct JPEG inclusion."
 category = "main"
 optional = false
@@ -53,11 +53,12 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "9fc3326638382ee66729daaf9556853a367cc7b1df7c5cc344e8e5340a105e13"
+content-hash = "cacc0652b39960cff61f6191c2dcd2e87403d62c7fe3389f2618d6324b95a34a"
 
 [metadata.files]
 img2pdf = [
-    {file = "img2pdf-0.4.0.tar.gz", hash = "sha256:eaee690ab8403dd1a9cb4db10afee41dd3e6c7ed63bdace02a0121f9feadb0c9"},
+    {file = "img2pdf-0.4.1-py3-none-any.whl", hash = "sha256:e7eb85dc87062e308066f2b0a9dbfb3c5c0bd306dec0cf9130e3836c0547253a"},
+    {file = "img2pdf-0.4.1.tar.gz", hash = "sha256:38a1229ca84b211d7782d1d65ad7251a9781bf24f6f6497c738c755fcfed5552"},
 ]
 lxml = [
     {file = "lxml-4.6.2-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:a9d6bc8642e2c67db33f1247a77c53476f3a166e09067c0474facb045756087f"},
