@@ -70,6 +70,7 @@ def gen_integrated_unified_name(row):
         elif row['content_type'] == "解答":
             row['content_type'] = "6解答"
 
+    row['period'] = row['period'].replace("前記", "前期")
 
     if row['period'] == "前期中間":
         row['period'] = "1前期中間"
