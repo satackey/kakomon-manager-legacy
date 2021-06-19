@@ -154,11 +154,13 @@ def check_rows(rows):
             errors.append(f"ファイル「{row['src']}」はないぞ？")
 
         if row['tool_type'] == "テスト":
-            if row['content_type'] != "問題" and row['content_type'] != "解答なし答案用紙" and row['content_type'] != "答案" and row['content_type'] != "学生解答" and row['content_type'] != "模範解答" and row['content_type'] != "解答":
+            if row['content_type'] != "問題" and row['content_type'] != "解答なし答案用紙" and row['content_type'] != "答案" and row['content_type'] != "学生解答" and row['content_type'] != "模範解答" and row['content_type'] != "解答" and row['content_type'] != "不明":
                 errors.append(f"種類が「{row['content_type']}」なのはおかしいぞ？種類が「{row['tool_type']}」のときは「問題」「解答なし答案用紙」「答案」「学生解答」「模範解答」「解答」のどれかにしないと。")
         elif row['tool_type'] == "勉強用":
-            if row['content_type'] != "ノート" and row['content_type'] != "まとめ" and row['content_type'] != "対策プリント":
+            if row['content_type'] != "ノート" and row['content_type'] != "まとめ" and row['content_type'] != "対策プリント" and row['content_type'] != "不明":
                 errors.append(f"種類が「{row['content_type']}」なのはおかしいぞ？種類が「{row['tool_type']}」のときは「ノート」「まとめ」「対策プリント」のどれかにしないと。")
+        elif row['tool_type'] == "不明":
+            pass
         else:
             errors.append(f"用途が「{row['tool_type']}」なのはおかしいぞ？「テスト」「勉強用」のどれかにしないと。")
 
